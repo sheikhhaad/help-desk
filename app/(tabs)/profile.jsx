@@ -5,6 +5,7 @@ import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -47,7 +48,13 @@ export default function Profile() {
       {/* Profile Card */}
       <View style={styles.card}>
         <View style={styles.avatarContainer}>
-          {/* Add Image here later if needed */}
+          {userData?.profileImageUrl ? (
+            <Image source={{ uri: userData.profileImageUrl }} style={styles.avatar} />
+          ) : (
+            <View style={[styles.avatar, { backgroundColor: '#eee', justifyContent: 'center', alignItems: 'center' }]}> 
+              <Ionicons name="person" size={60} color="#bbb" />
+            </View>
+          )}
           <TouchableOpacity style={styles.editIcon}>
             <MaterialIcons name="edit" size={20} color="#333" />
           </TouchableOpacity>
@@ -177,5 +184,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#fff",
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 5,
   },
 });

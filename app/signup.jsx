@@ -1,21 +1,20 @@
+import * as ImagePicker from "expo-image-picker";
+import { router } from "expo-router";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import { useState } from "react";
 import {
-  View,
+  Image,
+  ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
-  Image,
-  ScrollView,
+  View,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import axios from "axios";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { auth, db } from "../Firebase/Config";
 import logo from "../assets/images/logo.png";
-import { router } from "expo-router";
 
 export default function Signup() {
   const [role, setRole] = useState("");
@@ -32,39 +31,45 @@ export default function Signup() {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 1,
+      allowsEditing: true,
+      base64: true,
     });
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+      console.log("Image URI:", result.assets[0].uri);
     }
   };
 
-  const uploadImageToCloudinary = async () => {
-    if (!image) return null;
-
-    const data = new FormData();
-    data.append("file", {
-      uri: image,
-      type: "image/jpeg",
-      name: "profile.jpg",
-    });
-    data.append("upload_preset", "react-native");
-    data.append("cloud_name", "do8y0zgci");
-  
-
+  const uploadImageToCloudinary = async (imageUri) => {
     try {
-      const res = await axios.post(
-        "https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/image/upload",
-        data,
+      const response = await fetch(imageUri);
+      const blob = await response.blob();
+
+      const data = new FormData();
+      data.append("file", blob, "profile-image.jpg");
+      data.append("upload_preset", "react-native");
+      data.append("cloud_name", "do8y0zgci");
+
+      const res = await fetch(
+        "https://api.cloudinary.com/v1_1/do8y0zgci/image/upload",
         {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          method: "POST",
+          body: data,
         }
       );
-      return res.data.secure_url;
-    } catch (error) {
-      console.error("Cloudinary Upload Error:", error);
+
+      const result = await res.json();
+
+      if (result.secure_url) {
+        console.log("Uploaded Image URL:", result.secure_url);
+        return result.secure_url;
+      } else {
+        console.error("Cloudinary Upload Error:", result);
+        return null;
+      }
+    } catch (err) {
+      console.error("Upload failed:", err);
       return null;
     }
   };
@@ -81,7 +86,10 @@ export default function Signup() {
     }
 
     setUploading(true);
-    const imageUrl = await uploadImageToCloudinary();
+    let imageUrl = null;
+    if (image) {
+      imageUrl = await uploadImageToCloudinary(image);
+    }
     setUploading(false);
 
     try {
@@ -99,7 +107,7 @@ export default function Signup() {
         contact,
         country,
         role,
-        profileImageUrl: imageUrl || null,
+        profileImageUrl: imageUrl,
         createdAt: new Date(),
       });
 
@@ -121,14 +129,20 @@ export default function Signup() {
             {/* Role Buttons */}
             <View style={styles.roleButtonsRow}>
               <TouchableOpacity
-                style={[styles.roleButton, role === "donor" && styles.activeRole]}
+                style={[
+                  styles.roleButton,
+                  role === "donor" && styles.activeRole,
+                ]}
                 onPress={() => setRole("donor")}
               >
                 <Text style={styles.roleButtonText}>Donor</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.roleButton, role === "needy" && styles.activeRole]}
+                style={[
+                  styles.roleButton,
+                  role === "needy" && styles.activeRole,
+                ]}
                 onPress={() => setRole("needy")}
               >
                 <Text style={styles.roleButtonText}>Needy</Text>
@@ -187,7 +201,10 @@ export default function Signup() {
             />
 
             <TouchableOpacity
-              style={[styles.signupButton, uploading && { backgroundColor: "#ccc" }]}
+              style={[
+                styles.signupButton,
+                uploading && { backgroundColor: "#ccc" },
+              ]}
               onPress={signup}
               disabled={uploading}
             >
@@ -197,7 +214,9 @@ export default function Signup() {
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => router.push("/")}>
-              <Text style={styles.loginLink}>Already have an account? Login</Text>
+              <Text style={styles.loginLink}>
+                Already have an account? Login
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -207,87 +226,87 @@ export default function Signup() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: "#FFFFFF",
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    signupContainer: {
-      width: "85%",
-      padding: 20,
-      alignItems: "center",
-    },
-    logo: {
-      width: 140,
-      height: 140,
-      marginBottom: 25,
-    },
-    title: {
-      fontSize: 32,
-      fontWeight: "bold",
-      color: "#FF5F15",
-      marginBottom: 30,
-      textAlign: "center",
-    },
-    input: {
-      backgroundColor: "#F5F5F5",
-      padding: 13,
-      borderRadius: 10,
-      marginBottom: 12,
-      fontSize: 16,
-      width: "100%",
-    },
-    signupButton: {
-      backgroundColor: "#FF5F15",
-      paddingVertical: 13,
-      borderRadius: 10,
-      alignItems: "center",
-      marginTop: 10,
-      width: "100%",
-      elevation: 2,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.2,
-      shadowRadius: 4,
-    },
-    signupButtonText: {
-      color: "#FFFFFF",
-      fontSize: 17,
-      fontWeight: "bold",
-    },
-    roleButtonsRow: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      marginBottom: 15,
-      width: "100%",
-    },
-    roleButton: {
-      backgroundColor: "#FF5F15",
-      flex: 0.48,
-      paddingVertical: 12,
-      borderRadius: 10,
-      alignItems: "center",
-      elevation: 2,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 3,
-    },
-    activeRole: {
-      backgroundColor: "#e85c20",
-    },
-    roleButtonText: {
-      color: "#FFFFFF",
-      fontSize: 16,
-      fontWeight: "600",
-    },
-    loginLink: {
-      color: "#FF5F15",
-      textAlign: "center",
-      marginTop: 20,
-      fontSize: 16,
-    },
+  container: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  signupContainer: {
+    width: "85%",
+    padding: 20,
+    alignItems: "center",
+  },
+  logo: {
+    width: 140,
+    height: 140,
+    marginBottom: 25,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#FF5F15",
+    marginBottom: 30,
+    textAlign: "center",
+  },
+  input: {
+    backgroundColor: "#F5F5F5",
+    padding: 13,
+    borderRadius: 10,
+    marginBottom: 12,
+    fontSize: 16,
+    width: "100%",
+  },
+  signupButton: {
+    backgroundColor: "#FF5F15",
+    paddingVertical: 13,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 10,
+    width: "100%",
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  signupButtonText: {
+    color: "#FFFFFF",
+    fontSize: 17,
+    fontWeight: "bold",
+  },
+  roleButtonsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 15,
+    width: "100%",
+  },
+  roleButton: {
+    backgroundColor: "#FF5F15",
+    flex: 0.48,
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: "center",
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+  },
+  activeRole: {
+    backgroundColor: "#e85c20",
+  },
+  roleButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  loginLink: {
+    color: "#FF5F15",
+    textAlign: "center",
+    marginTop: 20,
+    fontSize: 16,
+  },
   imagePicker: {
     width: 100,
     height: 100,

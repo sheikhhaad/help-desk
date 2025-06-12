@@ -1,8 +1,10 @@
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import {
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -10,7 +12,6 @@ import {
   View,
 } from "react-native";
 import { auth, db } from "../Firebase/Config";
-import { router } from "expo-router";
 
 export default function Personal() {
   const [userData, setUserData] = useState(null);
@@ -43,7 +44,25 @@ export default function Personal() {
       contentContainerStyle={{ alignItems: "center", paddingBottom: 40 }}
     >
       <View style={styles.avatarWrapper}>
-        {/* Optional Avatar */}
+        {userData?.profileImageUrl ? (
+          <Image
+            source={{ uri: userData.profileImageUrl }}
+            style={styles.avatar}
+          />
+        ) : (
+          <View
+            style={[
+              styles.avatar,
+              {
+                backgroundColor: "#eee",
+                justifyContent: "center",
+                alignItems: "center",
+              },
+            ]}
+          >
+            <Ionicons name="person" size={60} color="#bbb" />
+          </View>
+        )}
       </View>
 
       {/* ✅ No Data UI Block */}
@@ -128,6 +147,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 30,
     marginBottom: 20,
+  },
+  avatar: {
+    width: 120,
+    height: 120,
+    borderRadius: 50,
+    marginBottom: 5,
   },
   section: {
     width: "90%",
