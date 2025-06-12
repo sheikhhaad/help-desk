@@ -9,17 +9,15 @@ import {
 } from "react-native";
 import logo from "../assets/images/logo.png";
 import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
-import { auth ,db} from "../Firebase/Config";
+import { auth, db } from "../Firebase/Config";
 import { useEffect, useState } from "react";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore"; 
-
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 
 export default function Index() {
-
   const [email, setEmail] = useState("");
   const [userData, setUserData] = useState(null);
   const [password, setPassword] = useState("");
-  const [NoUser, setNoUser] = useState(false)
+  const [NoUser, setNoUser] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -50,7 +48,6 @@ export default function Index() {
     return () => unsubscribe();
   }, []);
 
-
   let login = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
@@ -65,13 +62,8 @@ export default function Index() {
       });
   };
 
-  
-
   return (
-
     <View style={styles.container}>
-    
-    
       <View style={styles.loginContainer}>
         {/* Centered Logo */}
         <Image source={logo} style={styles.logo} resizeMode="contain" />
@@ -95,13 +87,21 @@ export default function Index() {
           onChangeText={(text) => setPassword(text)}
         />
 
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={() => login()}
-        >
+        <TouchableOpacity style={styles.loginButton} onPress={() => login()}>
           <Text style={styles.loginButtonText}>Login</Text>
         </TouchableOpacity>
-        {NoUser && <Text style={{color:"red",fontSize:16,fontWeight:"bold",marginTop:10}}>No User</Text>}
+        {NoUser && (
+          <Text
+            style={{
+              color: "red",
+              fontSize: 16,
+              fontWeight: "bold",
+              marginTop: 10,
+            }}
+          >
+            No User
+          </Text>
+        )}
         <TouchableOpacity>
           <Text style={styles.forgotPassword}>Forgot Password?</Text>
         </TouchableOpacity>

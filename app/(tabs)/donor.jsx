@@ -1,42 +1,49 @@
-import { Ionicons } from '@expo/vector-icons';
-import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Carousel from 'react-native-snap-carousel';
+import { Ionicons } from "@expo/vector-icons";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+// import Carousel from 'react-native-snap-carousel';
 
 const DonorScreen = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   // Carousel data
   const carouselItems = [
     {
       id: 1,
-      image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf',
-      title: 'Education for All',
-      description: 'Help us build schools in rural areas'
+      image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf",
+      title: "Education for All",
+      description: "Help us build schools in rural areas",
     },
     {
       id: 2,
-      image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b',
-      title: 'Clean Water Initiative',
-      description: 'Provide clean drinking water to villages'
+      image: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b",
+      title: "Clean Water Initiative",
+      description: "Provide clean drinking water to villages",
     },
     {
       id: 3,
-      image: 'https://images.unsplash.com/photo-1576765974257-b414b9ea0051',
-      title: 'Medical Aid',
-      description: 'Support free medical camps in remote areas'
-    }
+      image: "https://images.unsplash.com/photo-1576765974257-b414b9ea0051",
+      title: "Medical Aid",
+      description: "Support free medical camps in remote areas",
+    },
   ];
 
   // Donation options
   const donationOptions = [
-    { amount: 100, currency: '₹' },
-    { amount: 500, currency: '₹' },
-    { amount: 1000, currency: '₹' },
-    { amount: 2000, currency: '₹' },
-    { amount: 5000, currency: '₹' },
+    { amount: 100, currency: "₹" },
+    { amount: 500, currency: "₹" },
+    { amount: 1000, currency: "₹" },
+    { amount: 2000, currency: "₹" },
+    { amount: 5000, currency: "₹" },
   ];
 
   useEffect(() => {
@@ -62,36 +69,24 @@ const DonorScreen = () => {
       <View style={styles.errorContainer}>
         <Ionicons name="alert-circle" size={50} color="#FF5F15" />
         <Text style={styles.errorText}>{error}</Text>
-        <TouchableOpacity style={styles.retryButton} onPress={() => setError(null)}>
+        <TouchableOpacity
+          style={styles.retryButton}
+          onPress={() => setError(null)}
+        >
           <Text style={styles.retryText}>Retry</Text>
         </TouchableOpacity>
       </View>
     );
   }
 
-  // Render carousel item
-  const renderCarouselItem = ({ item }) => (
-    <View style={styles.carouselItem}>
-      <Image 
-        source={{ uri: item.image }} 
-        style={styles.carouselImage}
-        resizeMode="cover"
-      />
-      <View style={styles.carouselTextContainer}>
-        <Text style={styles.carouselTitle}>{item.title}</Text>
-        <Text style={styles.carouselDescription}>{item.description}</Text>
-      </View>
-    </View>
-  );
-
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Donor Dashboard</Text>
-      </View>
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Welcome to the Donor Page</Text>
-        <Text style={styles.cardContent}>This is a modern UI design for the donor page. You can add more content here.</Text>
+        <Text style={styles.cardContent}>
+          This is a modern UI design for the donor page. You can add more
+          content here.
+        </Text>
       </View>
 
       {/* Hero Section */}
@@ -101,7 +96,7 @@ const DonorScreen = () => {
       </View>
 
       {/* Causes Carousel */}
-      <View style={styles.carouselContainer}>
+      {/* <View style={styles.carouselContainer}>
         <Carousel
           data={carouselItems}
           renderItem={renderCarouselItem}
@@ -109,15 +104,15 @@ const DonorScreen = () => {
           itemWidth={Dimensions.get('window').width - 80}
           onSnapToItem={index => setActiveIndex(index)}
         />
-      </View>
+      </View> */}
 
       {/* Donation Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Select Donation Amount</Text>
         <View style={styles.donationOptions}>
           {donationOptions.map((option, index) => (
-            <TouchableOpacity 
-              key={index} 
+            <TouchableOpacity
+              key={index}
               style={styles.donationCard}
               activeOpacity={0.7}
             >
@@ -167,24 +162,24 @@ const DonorScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   header: {
-    backgroundColor: '#FF5F15',
+    backgroundColor: "#FF5F15",
     padding: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   headerTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     margin: 20,
     padding: 20,
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -192,92 +187,64 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   cardContent: {
     fontSize: 16,
-    color: '#666',
+    color: "#666",
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: '#FF5F15',
+    color: "#FF5F15",
   },
   errorContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   errorText: {
     marginTop: 10,
     fontSize: 16,
-    color: '#FF5F15',
+    color: "#FF5F15",
   },
   retryButton: {
     marginTop: 20,
-    backgroundColor: '#FF5F15',
+    backgroundColor: "#FF5F15",
     padding: 10,
     borderRadius: 5,
   },
   retryText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
   },
   heroContainer: {
-    backgroundColor: '#4361ee',
+    backgroundColor: "#4361ee",
     paddingVertical: 40,
     paddingHorizontal: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   heroTitle: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: 'white',
-    textAlign: 'center',
+    fontWeight: "bold",
+    color: "white",
+    textAlign: "center",
     marginBottom: 10,
   },
   heroSubtitle: {
     fontSize: 18,
-    color: '#e2f0ff',
-    textAlign: 'center',
-  },
-  carouselContainer: {
-    marginTop: -30,
-    paddingBottom: 20,
-  },
-  carouselItem: {
-    borderRadius: 20,
-    overflow: 'hidden',
-    elevation: 5,
-    backgroundColor: 'white',
-  },
-  carouselImage: {
-    height: 200,
-    width: '100%',
-  },
-  carouselTextContainer: {
-    padding: 20,
-    backgroundColor: 'white',
-  },
-  carouselTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#2d3748',
-    marginBottom: 5,
-  },
-  carouselDescription: {
-    fontSize: 16,
-    color: '#718096',
+    color: "#e2f0ff",
+    textAlign: "center",
   },
   section: {
     padding: 20,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     marginVertical: 10,
     marginHorizontal: 15,
     borderRadius: 15,
@@ -285,97 +252,97 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 22,
-    fontWeight: 'bold',
-    color: '#2d3748',
+    fontWeight: "bold",
+    color: "#2d3748",
     marginBottom: 20,
   },
   donationOptions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
   },
   donationCard: {
-    width: '30%',
+    width: "30%",
     aspectRatio: 1,
-    backgroundColor: '#f0f7ff',
+    backgroundColor: "#f0f7ff",
     borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: '#d0e4ff',
+    borderColor: "#d0e4ff",
   },
   currency: {
     fontSize: 18,
-    color: '#3b82f6',
-    fontWeight: 'bold',
+    color: "#3b82f6",
+    fontWeight: "bold",
   },
   amount: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1e40af',
+    fontWeight: "bold",
+    color: "#1e40af",
   },
   customDonation: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   inputContainer: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f0f7ff',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f0f7ff",
     borderRadius: 12,
     paddingHorizontal: 20,
     marginRight: 15,
     height: 60,
     borderWidth: 1,
-    borderColor: '#d0e4ff',
+    borderColor: "#d0e4ff",
   },
   currencySymbol: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#3b82f6',
+    fontWeight: "bold",
+    color: "#3b82f6",
     marginRight: 5,
   },
   input: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1e40af',
+    fontWeight: "bold",
+    color: "#1e40af",
   },
   donateButton: {
-    backgroundColor: '#10b981',
+    backgroundColor: "#10b981",
     borderRadius: 12,
     paddingVertical: 18,
     paddingHorizontal: 25,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   donateButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
     fontSize: 16,
   },
   statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   statCard: {
-    alignItems: 'center',
+    alignItems: "center",
     padding: 15,
     borderRadius: 12,
-    backgroundColor: '#f0fdf4',
-    width: '30%',
+    backgroundColor: "#f0fdf4",
+    width: "30%",
     borderWidth: 1,
-    borderColor: '#dcfce7',
+    borderColor: "#dcfce7",
   },
   statValue: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#047857',
+    fontWeight: "bold",
+    color: "#047857",
   },
   statLabel: {
     fontSize: 14,
-    color: '#65a30d',
-    textAlign: 'center',
+    color: "#65a30d",
+    textAlign: "center",
     marginTop: 5,
   },
 });

@@ -49,9 +49,21 @@ export default function Profile() {
       <View style={styles.card}>
         <View style={styles.avatarContainer}>
           {userData?.profileImageUrl ? (
-            <Image source={{ uri: userData.profileImageUrl }} style={styles.avatar} />
+            <Image
+              source={{ uri: userData.profileImageUrl }}
+              style={styles.avatar}
+            />
           ) : (
-            <View style={[styles.avatar, { backgroundColor: '#eee', justifyContent: 'center', alignItems: 'center' }]}> 
+            <View
+              style={[
+                styles.avatar,
+                {
+                  backgroundColor: "#eee",
+                  justifyContent: "center",
+                  alignItems: "center",
+                },
+              ]}
+            >
               <Ionicons name="person" size={60} color="#bbb" />
             </View>
           )}
@@ -99,7 +111,10 @@ export default function Profile() {
             />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem} onPress={() => router.push("/address")}>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => router.push("/address")}
+          >
             <Entypo
               name="location-pin"
               size={20}
