@@ -8,27 +8,58 @@ import {
   Image,
 } from "react-native";
 import logo from "../assets/images/logo.png";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../Firebase/Config";
-import { useState } from "react";
+import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import { auth ,db} from "../Firebase/Config";
+import { useEffect, useState } from "react";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore"; 
+
 
 export default function Index() {
 
   const [email, setEmail] = useState("");
+  const [userData, setUserData] = useState(null);
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const uid = user.uid;
+        console.log("Logged-in UID:", uid);
+
+        try {
+          const userRef = doc(db, "users", uid);
+          const userSnap = await getDoc(userRef);
+
+          if (userSnap.exists()) {
+            setUserData(userSnap.data());
+            console.log("User data:", userSnap.data());
+          } else {
+            console.log("No such user document found!");
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      } else {
+        console.log("No user is logged in.");
+      }
+    });
+
+    // Cleanup the listener when component unmounts
+    return () => unsubscribe();
+  }, []);
 
 
   let login = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
-        
+        console.log(user);
+        router.push("/donor");
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
       });
-    signInWithEmailAndPassword(auth, email, password);
   };
 
   return (
@@ -58,7 +89,7 @@ export default function Index() {
 
         <TouchableOpacity
           style={styles.loginButton}
-          onPress={() => router.push("/(tabs)")}
+          onPress={() => login()}
         >
           <Text style={styles.loginButtonText}>Login</Text>
         </TouchableOpacity>

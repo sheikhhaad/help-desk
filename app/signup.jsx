@@ -8,10 +8,12 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  ScrollView,
 } from "react-native";
 import logo from "../assets/images/logo.png";
 import { auth, db } from "../Firebase/Config";
-import { collection, addDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Signup() {
   const [role, setRole] = useState("");
@@ -23,136 +25,129 @@ export default function Signup() {
   const [country, setCountry] = useState("");
 
   const signup = async () => {
-    if (!role) {
-      return;
-    }
-
-    if (!fullName || !email || !password || !confirmPassword) {
+    // Basic validations
+    if (!role || !fullName || !email || !password || !confirmPassword) {
+      console.log("Please fill in all required fields.");
       return;
     }
 
     if (password !== confirmPassword) {
+      console.log("Passwords do not match.");
       return;
     }
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      // Firebase Auth: Create user
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
+
+      // Firestore: Save user data using UID as document ID
+      await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
+        fullName,
+        email,
+        phoneNumber,
+        country,
+        role,
+        createdAt: new Date(),
+      });
+
+      console.log("User registered and data saved.");
       router.push("/");
     } catch (error) {
-      console.log("Error", error.message);
-    }
-
-    try {
-      const docRef = await addDoc(collection(db, "users"), {
-        fullName: fullName,
-        email: email,
-        password: password,
-        role: role,
-        createdAt: new Date(),
-        phoneNumber: phoneNumber,
-        country: country,
-      });
-      console.log("Document written with ID: ", docRef.id);
-    } catch (e) {
-      console.error("Error adding document: ", e);
+      console.error("Signup error:", error.message);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.signupContainer}>
-        {/* Logo centered above title */}
-        <Image source={logo} style={styles.logo} resizeMode="contain" />
+    <ScrollView>
+      <SafeAreaView>
+        <View style={styles.container}>
+          <View style={styles.signupContainer}>
+            <Image source={logo} style={styles.logo} resizeMode="contain" />
+            <Text style={styles.title}>Sign Up</Text>
 
-        <Text style={styles.title}>Sign Up</Text>
+            {/* Role Selection */}
+            <View style={styles.roleButtonsRow}>
+              <TouchableOpacity
+                style={[styles.roleButton, role === "donor" && styles.activeRole]}
+                onPress={() => setRole("donor")}
+              >
+                <Text style={styles.roleButtonText}>Donor</Text>
+              </TouchableOpacity>
 
-        {/* Role selection buttons */}
-        <View style={styles.roleButtonsRow}>
-          <TouchableOpacity
-            style={[styles.roleButton, role === "donor" && styles.activeRole]}
-            onPress={() => setRole("donor")}
-          >
-            <Text style={styles.roleButtonText}>Donor</Text>
-          </TouchableOpacity>
+              <TouchableOpacity
+                disabled={true}
+                style={[styles.roleButton, role === "needy" && styles.activeRole]}
+                onPress={() => setRole("needy")}
+              >
+                <Text style={styles.roleButtonText}>Needy</Text>
+              </TouchableOpacity>
+            </View>
 
-          <TouchableOpacity
-            disabled={true}
-            style={[styles.roleButton, role === "needy" && styles.activeRole]}
-            onPress={() => setRole("needy")}
-          >
-            <Text style={styles.roleButtonText}>Needy</Text>
-          </TouchableOpacity>
+            <TextInput
+              style={styles.input}
+              placeholder="Full Name"
+              placeholderTextColor="#666"
+              value={fullName}
+              onChangeText={setFullName}
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              placeholderTextColor="#666"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Phone Number"
+              placeholderTextColor="#666"
+              value={phoneNumber}
+              onChangeText={setPhoneNumber}
+              keyboardType="phone-pad"
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Country"
+              placeholderTextColor="#666"
+              value={country}
+              onChangeText={setCountry}
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              placeholderTextColor="#666"
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Confirm Password"
+              placeholderTextColor="#666"
+              secureTextEntry
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+            />
+
+            <TouchableOpacity style={styles.signupButton} onPress={signup}>
+              <Text style={styles.signupButtonText}>Create Account</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => router.push("/")}>
+              <Text style={styles.loginLink}>Already have an account? Login</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-
-        <TextInput
-          style={styles.input}
-          placeholder="Full Name"
-          placeholderTextColor="#666"
-          value={fullName}
-          onChangeText={(text) => setFullName(text)}
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#666"
-          value={email}
-          onChangeText={(text) => setEmail(text)}
-          keyboardType="email-address"
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Phone Number"
-          placeholderTextColor="#666"
-          value={phoneNumber}
-          onChangeText={(text) => setPhoneNumber(text)}
-          keyboardType="phone-pad"
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Country"
-          placeholderTextColor="#666"
-          value={country}
-          onChangeText={(text) => setCountry(text)}
-          keyboardType="default"
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor="#666"
-          secureTextEntry
-          value={password}
-          onChangeText={(text) => setPassword(text)}
-          keyboardType="visible-password"
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Confirm Password"
-          placeholderTextColor="#666"
-          secureTextEntry
-          value={confirmPassword}
-          onChangeText={(text) => setConfirmPassword(text)}
-          keyboardType="visible-password"
-        />
-
-        <TouchableOpacity style={styles.signupButton} onPress={() => signup()}>
-          <Text style={styles.signupButtonText}>Create Account</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => router.push("/")}>
-          <Text style={styles.loginLink}>Already have an account? Login</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+      </SafeAreaView>
+    </ScrollView>
   );
 }
 
