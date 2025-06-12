@@ -19,6 +19,7 @@ export default function Index() {
   const [email, setEmail] = useState("");
   const [userData, setUserData] = useState(null);
   const [password, setPassword] = useState("");
+  const [NoUser, setNoUser] = useState(false)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -41,6 +42,7 @@ export default function Index() {
         }
       } else {
         console.log("No user is logged in.");
+        // setNoUser(true);
       }
     });
 
@@ -59,11 +61,17 @@ export default function Index() {
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+        setNoUser(true);
       });
   };
 
+  
+
   return (
+
     <View style={styles.container}>
+    
+    
       <View style={styles.loginContainer}>
         {/* Centered Logo */}
         <Image source={logo} style={styles.logo} resizeMode="contain" />
@@ -93,7 +101,7 @@ export default function Index() {
         >
           <Text style={styles.loginButtonText}>Login</Text>
         </TouchableOpacity>
-
+        {NoUser && <Text style={{color:"red",fontSize:16,fontWeight:"bold",marginTop:10}}>No User</Text>}
         <TouchableOpacity>
           <Text style={styles.forgotPassword}>Forgot Password?</Text>
         </TouchableOpacity>
