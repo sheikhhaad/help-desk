@@ -1,4 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -10,37 +12,50 @@ const DonorHeader = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const user = auth.currentUser;
-        if (user) {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
           const userRef = doc(db, "users", user.uid);
           const userSnap = await getDoc(userRef);
           if (userSnap.exists()) {
             setUserData(userSnap.data());
+            console.log("User data fetched:", userSnap.data());
+          } else {
+            console.log("No user data found");
+            setUserData(null);
           }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          setUserData(null);
         }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      } finally {
-        setLoading(false);
+      } else {
+        console.log("No user logged in");
+        setUserData(null);
       }
-    };
+      setLoading(false);
+    });
 
-    fetchUserData();
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
   }, []);
 
   return (
     <View style={styles.header}>
       {/* Left: Logo */}
-      <Image source={logo} style={styles.logo} resizeMode="contain" />
+      <TouchableOpacity onPress={() => router.push("/donor")}>
+        <Image source={logo} style={styles.logo} resizeMode="contain" />
+      </TouchableOpacity>
 
       {/* Center: Title */}
       <Text style={styles.title}>Donor</Text>
 
       {/* Right: Profile Image */}
-      <TouchableOpacity style={styles.profileContainer}>
-        {userData?.profileImageUrl ? (
+      <TouchableOpacity style={styles.profileContainer} onPress={() => router.push("/profile")}>
+        {loading ? (
+          <View style={styles.profilePlaceholder}>
+            <Ionicons name="hourglass-outline" size={24} color="#fff" />
+          </View>
+        ) : userData?.profileImageUrl ? (
           <Image
             source={{ uri: userData.profileImageUrl }}
             style={styles.profileImage}
@@ -66,11 +81,11 @@ const styles = StyleSheet.create({
     height: 60,
   },
   logo: {
-    width: 80,
+    width: 70,
     height: 70,
   },
   title: {
-    fontSize: 20,
+    fontSize: 28,
     fontWeight: "bold",
     color: "black",
     fontFamily: "Poppins-Bold",
@@ -80,6 +95,9 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     overflow: "hidden",
+    borderColor: "#FF5F15",
+    backgroundColor: "black",
+    borderWidth: 2,
   },
   profileImage: {
     width: "100%",

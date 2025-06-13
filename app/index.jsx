@@ -23,8 +23,7 @@ export default function Index() {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         const uid = user.uid;
-        console.log("Logged-in UID:", uid);
-
+        router.push("/donor");
         try {
           const userRef = doc(db, "users", uid);
           const userSnap = await getDoc(userRef);

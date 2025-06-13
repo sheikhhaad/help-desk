@@ -1,3 +1,8 @@
+// Add setImmediate polyfill
+if (typeof setImmediate === 'undefined') {
+  global.setImmediate = setTimeout;
+}
+
 import { Stack } from "expo-router";
 
 export default function RootLayout() {
