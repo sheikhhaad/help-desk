@@ -13,35 +13,20 @@ import {
 } from "react-native";
 import Swiper from "react-native-swiper";
 import carouselImage1 from "../../assets/images/carosuel-1.jpg";
-import { default as carouselImage2, default as carouselImage4 } from "../../assets/images/donationpagebanner-copy.jpg";
+import {
+  default as carouselImage2,
+  default as carouselImage4,
+} from "../../assets/images/donationpagebanner-copy.jpg";
 import carouselImage3 from "../../assets/images/poverty_2226036b.webp";
 import Testimonial from "../../Component/Testimonial";
 import { auth } from "../../Firebase/Config";
+import { DonationCard } from "../../Component/DonationCard";
+import cardimg from "../../assets/images/Donationcard1.jpg";
+import cardimg2 from "../../assets/images/Donationcard2.jpg";
+import cardimg3 from "../../assets/images/Donationcard3.jpg";
+import cardimg4 from "../../assets/images/Donationcard4.webp";
 
 // DonationCard Component
-const DonationCard = ({ imageSource, title, description, raised, goal }) => {
-  const progress = (raised / goal) * 100;
-
-  return (
-    <View style={styles.donationCardContainer}>
-      <Image source={imageSource} style={styles.cardImage} resizeMode="cover" />
-      <View style={styles.cardContent}>
-        <Text style={styles.cardTitle}>{title}</Text>
-        <Text style={styles.cardDescription}>{description}</Text>
-        <View style={styles.progressContainer}>
-          <Text style={styles.progressText}>Raised {raised}$</Text>
-          <Text style={styles.progressText}>Goal {goal}$</Text>
-        </View>
-        <View style={styles.progressBar}>
-          <View style={[styles.progressFill, { width: `${progress}%` }]} />
-        </View>
-        <TouchableOpacity style={styles.cardDonateButton} activeOpacity={0.8}>
-          <Text style={styles.cardDonateButtonText}>DONATE NOW →</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-};
 
 // TestimonialCard Component
 
@@ -57,6 +42,7 @@ const DonorScreen = () => {
     { amount: 500, currency: "₹" },
     { amount: 1000, currency: "₹" },
     { amount: 2000, currency: "₹" },
+    { amount: 5000, currency: "₹" },
     { amount: 5000, currency: "₹" },
   ];
 
@@ -170,15 +156,6 @@ const DonorScreen = () => {
       </View>
 
       {/* Donation Card Section */}
-      <View style={styles.section}>
-        <DonationCard
-          imageSource={require("../../assets/images/poverty_2226036b.webp")} // Replace with your image path
-          title="Education Support"
-          description="Providing access to quality education and learning resources for underprivileged children."
-          raised={45.0}
-          goal={120.0}
-        />
-      </View>
 
       {/* Donation Section */}
       <View style={styles.section}>
@@ -215,6 +192,38 @@ const DonorScreen = () => {
             <Text style={styles.donateButtonText}>DONATE NOW</Text>
           </TouchableOpacity>
         </View>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Together We Can Empower Lives</Text>
+        <DonationCard
+          imageSource={cardimg} // Replace with your image path
+          title="Education Support"
+          description="Providing access to quality education and learning resources for underprivileged children."
+          raised={45.0}
+          goal={120.0}
+        />
+        <DonationCard
+          imageSource={cardimg2} // Replace with your image path
+          title="Education Support"
+          description="Providing access to quality education and learning resources for underprivileged children."
+          raised={45.0}
+          goal={120.0}
+        />
+        <DonationCard
+          imageSource={cardimg3} // Replace with your image path
+          title="Education Support"
+          description="Providing access to quality education and learning resources for underprivileged children."
+          raised={45.0}
+          goal={120.0}
+        />
+        <DonationCard
+          imageSource={cardimg4} // Replace with your image path
+          title="Education Support"
+          description="Providing access to quality education and learning resources for underprivileged children."
+          raised={45.0}
+          goal={120.0}
+        />
       </View>
 
       {/* Impact Section */}
