@@ -70,7 +70,7 @@ const Testimonial = () => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 400,
+    height: 500,
     backgroundColor: "#f8f9fa",
     paddingVertical: 20,
   },
