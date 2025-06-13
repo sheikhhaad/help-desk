@@ -16,7 +16,7 @@ import { auth, db } from "../../Firebase/Config";
 export default function Profile() {
   const router = useRouter();
   const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true); // ✅ Loading state
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -28,7 +28,7 @@ export default function Profile() {
           setUserData(userSnap.data());
         }
       }
-      setLoading(false); // ✅ Stop loading once fetch is done (whether user exists or not)
+      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -38,7 +38,7 @@ export default function Profile() {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#FF5F15" />
-        <Text style={{ marginTop: 10, color: "#FF5F15" }}>Loading...</Text>
+        <Text style={styles.loadingText}>Loading...</Text>
       </View>
     );
   }
@@ -64,11 +64,11 @@ export default function Profile() {
                 },
               ]}
             >
-              <Ionicons name="person" size={60} color="#bbb" />
+              <Ionicons name="person" size={60} color="#FF5F15" />
             </View>
           )}
           <TouchableOpacity style={styles.editIcon}>
-            <MaterialIcons name="edit" size={20} color="#333" />
+            <MaterialIcons name="edit" size={20} color="#FF5F15" />
           </TouchableOpacity>
         </View>
         <Text style={styles.name}>{userData?.fullName || "John Doe"}</Text>
@@ -82,15 +82,15 @@ export default function Profile() {
           >
             <Ionicons
               name="person-outline"
-              size={20}
-              color="#333"
+              size={24}
+              color="#FF5F15"
               style={styles.menuIcon}
             />
             <Text style={styles.menuText}>My Profile</Text>
             <Entypo
               name="chevron-right"
-              size={20}
-              color="#333"
+              size={24}
+              color="#FF5F15"
               style={styles.chevron}
             />
           </TouchableOpacity>
@@ -98,15 +98,15 @@ export default function Profile() {
           <TouchableOpacity style={styles.menuItem}>
             <MaterialIcons
               name="card-giftcard"
-              size={20}
-              color="#333"
+              size={24}
+              color="#FF5F15"
               style={styles.menuIcon}
             />
             <Text style={styles.menuText}>Donation</Text>
             <Entypo
               name="chevron-right"
-              size={20}
-              color="#333"
+              size={24}
+              color="#FF5F15"
               style={styles.chevron}
             />
           </TouchableOpacity>
@@ -117,15 +117,15 @@ export default function Profile() {
           >
             <Entypo
               name="location-pin"
-              size={20}
-              color="#333"
+              size={24}
+              color="#FF5F15"
               style={styles.menuIcon}
             />
             <Text style={styles.menuText}>My Address</Text>
             <Entypo
               name="chevron-right"
-              size={20}
-              color="#333"
+              size={24}
+              color="#FF5F15"
               style={styles.chevron}
             />
           </TouchableOpacity>
@@ -139,13 +139,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 40,
+    backgroundColor: "#f5f5f5",
   },
   card: {
+    backgroundColor: "#fff",
     borderRadius: 20,
     margin: 10,
     padding: 20,
     alignItems: "center",
-    flex: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   avatarContainer: {
     position: "relative",
@@ -178,7 +184,7 @@ const styles = StyleSheet.create({
   },
   menuItem: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: -"center",
     paddingVertical: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#bbb",
@@ -205,5 +211,12 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     marginBottom: 5,
+    borderWidth: 2,
+    borderColor: "#FF5F15",
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#FF5F15",
   },
 });

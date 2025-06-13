@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { auth, db } from "../Firebase/Config";
 
-export default function Personal() {
+export default function PersonalInfo() {
   const [userData, setUserData] = useState(null);
   const [noData, setNoData] = useState(false);
 
@@ -28,13 +28,12 @@ export default function Personal() {
           setNoData(false);
         } else {
           setUserData(null);
-          setNoData(true); // 🔥 this will trigger noData UI
+          setNoData(true);
         }
       } else {
         router.push("/");
       }
     });
-
     return () => unsubscribe();
   }, []);
 
@@ -60,15 +59,14 @@ export default function Personal() {
               },
             ]}
           >
-            <Ionicons name="person" size={60} color="#bbb" />
+            <Ionicons name="person" size={60} color="#FF5F15" />
           </View>
         )}
       </View>
 
-      {/* ✅ No Data UI Block */}
       {noData && (
         <View style={styles.noDataWrapper}>
-          <Ionicons name="alert-circle-outline" size={64} color="#ccc" />
+          <Ionicons name="alert-circle-outline" size={64} color="#FF5F15" />
           <Text style={styles.noDataText}>No data found</Text>
           <Text style={styles.noDataSubText}>
             Please complete your profile information.
@@ -76,48 +74,62 @@ export default function Personal() {
         </View>
       )}
 
-      {/* ✅ User Data UI Block */}
       {userData && (
         <>
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>PERSONAL INFORMATION</Text>
 
             <View style={styles.row}>
-              <Text style={styles.label}>Username</Text>
+              <View style={styles.labelContainer}>
+                <Ionicons name="at-outline" size={20} color="#FF5F15" />
+                <Text style={styles.label}>Username</Text>
+              </View>
               <View style={styles.valueRow}>
                 <Text style={styles.valueText}>@{userData.fullName}</Text>
               </View>
             </View>
 
             <TouchableOpacity style={styles.row}>
-              <Text style={styles.label}>Name</Text>
+              <View style={styles.labelContainer}>
+                <Ionicons name="person-outline" size={20} color="#FF5F15" />
+                <Text style={styles.label}>Name</Text>
+              </View>
               <View style={styles.valueRow}>
                 <Text style={styles.valueText}>{userData.fullName}</Text>
-                <Ionicons name="chevron-forward" size={18} color="#bbb" />
+                <Ionicons name="chevron-forward" size={18} color="#FF5F15" />
               </View>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.row}>
-              <Text style={styles.label}>Phone</Text>
+              <View style={styles.labelContainer}>
+                <Ionicons name="call-outline" size={20} color="#FF5F15" />
+                <Text style={styles.label}>Phone</Text>
+              </View>
               <View style={styles.valueRow}>
                 <Text style={styles.valueText}>{userData.contact}</Text>
-                <Ionicons name="chevron-forward" size={18} color="#bbb" />
+                <Ionicons name="chevron-forward" size={18} color="#FF5F15" />
               </View>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.row}>
-              <Text style={styles.label}>Birthday</Text>
+              <View style={styles.labelContainer}>
+                <Ionicons name="calendar-outline" size={20} color="#FF5F15" />
+                <Text style={styles.label}>Birthday</Text>
+              </View>
               <View style={styles.valueRow}>
                 <Text style={styles.valueText}>{userData.birthday}</Text>
-                <Ionicons name="chevron-forward" size={18} color="#bbb" />
+                <Ionicons name="chevron-forward" size={18} color="#FF5F15" />
               </View>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.row}>
-              <Text style={styles.label}>Country</Text>
+              <View style={styles.labelContainer}>
+                <Ionicons name="location-outline" size={20} color="#FF5F15" />
+                <Text style={styles.label}>Country</Text>
+              </View>
               <View style={styles.valueRow}>
                 <Text style={styles.valueText}>{userData.country}</Text>
-                <Ionicons name="chevron-forward" size={18} color="#bbb" />
+                <Ionicons name="chevron-forward" size={18} color="#FF5F15" />
               </View>
             </TouchableOpacity>
           </View>
@@ -125,10 +137,13 @@ export default function Personal() {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>LOGIN INFORMATION</Text>
             <TouchableOpacity style={styles.row}>
-              <Text style={styles.label}>Email</Text>
+              <View style={styles.labelContainer}>
+                <Ionicons name="mail-outline" size={20} color="#FF5F15" />
+                <Text style={styles.label}>Email</Text>
+              </View>
               <View style={styles.valueRow}>
                 <Text style={styles.valueText}>{userData.email}</Text>
-                <Ionicons name="chevron-forward" size={18} color="#bbb" />
+                <Ionicons name="chevron-forward" size={18} color="#FF5F15" />
               </View>
             </TouchableOpacity>
           </View>
@@ -141,7 +156,7 @@ export default function Personal() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#f5f5f5",
   },
   avatarWrapper: {
     alignItems: "center",
@@ -151,8 +166,10 @@ const styles = StyleSheet.create({
   avatar: {
     width: 120,
     height: 120,
-    borderRadius: 50,
+    borderRadius: 60,
     marginBottom: 5,
+    borderWidth: 2,
+    borderColor: "#FF5F15",
   },
   section: {
     width: "90%",
@@ -162,32 +179,36 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 2,
+    elevation: 3,
   },
   sectionTitle: {
-    fontSize: 12,
-    color: "#888",
+    fontSize: 16,
+    color: "#FF5F15",
     fontWeight: "bold",
     marginLeft: 18,
-    marginBottom: 6,
-    marginTop: 6,
+    marginBottom: 10,
+    marginTop: 10,
     letterSpacing: 1,
   },
   row: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 18,
     paddingVertical: 14,
     borderBottomWidth: 1,
     borderBottomColor: "#f0f0f0",
   },
+  labelContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   label: {
     fontSize: 15,
-    color: "#222",
+    color: "#888",
     fontWeight: "500",
+    marginLeft: 10,
   },
   valueRow: {
     flexDirection: "row",
@@ -195,7 +216,8 @@ const styles = StyleSheet.create({
   },
   valueText: {
     fontSize: 15,
-    color: "#888",
+    color: "#222",
+    fontWeight: "bold",
     marginRight: 6,
   },
   noDataWrapper: {
@@ -212,7 +234,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     fontSize: 18,
     fontWeight: "bold",
-    color: "#666",
+    color: "#FF5F15",
   },
   noDataSubText: {
     fontSize: 14,
